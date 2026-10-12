@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMARTPARK IoT</title>
+  <link rel="stylesheet" href="/static/style.css?v=3">
+</head>
+
+<body>
+  <main class="page">
+    <header class="header">
+      <div>
+        <h1><span style="font-size: 32px; margin-right: 12px; display: inline-block;">🚗</span> SMARTPARK IoT</h1>
+        <p>Live Parking Status &middot; ParkingSite 001</p>
+      </div>
+      <div class="header-right">
+        <span id="deviceStatus" class="status-pill offline">● ESP32 OFFLINE</span>
+        <span id="lastUpdate">Last update: --:--:--</span>
+      </div>
+    </header>
+
+    <div id="staleNote" class="stale-note hidden">
+      ⚠️ Device connection may be lost. Data is older than 60 seconds.
+    </div>
+
+    <section class="stats">
+      <article class="card stat-card">
+        <span>Total Slots</span><strong>3</strong>
+      </article>
+      <article class="card stat-card">
+        <span>Occupied</span><strong id="occupied">0</strong>
+      </article>
+      <article class="card stat-card">
+        <span>Available</span><strong id="available">3</strong>
+      </article>
+      <article class="card stat-card">
+        <span>Occupancy Rate</span>
+        <strong id="rate">0%</strong>
+        <div class="progress">
+          <div id="rateBar"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="main-grid">
+      <article class="card parking-panel">
+        <h2>Parking Slots</h2>
+        <div class="slots">
+          <div id="slot1" class="slot-card"><b>SLOT 01</b><span>--</span></div>
+          <div id="slot2" class="slot-card"><b>SLOT 02</b><span>--</span></div>
+          <div id="slot3" class="slot-card"><b>SLOT 03</b><span>--</span></div>
+        </div>
+        <p class="legend">Active slot monitoring with ultrasonic sensors.</p>
+      </article>
+
+      <aside class="card side-panel">
+        <h2>Gates</h2>
+        <div class="gates">
+          <div>
+            <label>ENTRANCE</label>
+            <strong id="entranceGate">CLOSED</strong>
+          </div>
+          <div>
+            <label>EXIT</label>
+            <strong id="exitGate">CLOSED</strong>
+          </div>
+        </div>
+        <div class="command-placeholder">
+
+          <button class="gate-btn open-btn" onclick="controlGate('entrance', 'open')">
+            ▲ OPEN IN
+          </button>
+
+          <button class="gate-btn open-btn" onclick="controlGate('exit', 'open')">
+            ▲ OPEN OUT
+          </button>
+
+          <button class="gate-btn close-btn" onclick="controlGate('entrance', 'close')">
+            ▼ CLOSE IN
+          </button>
+
+          <button class="gate-btn close-btn" onclick="controlGate('exit', 'close')">
+            ▼ CLOSE OUT
+          </button>
+
+        </div>
+
+        <p id="gateMessage" class="muted gate-msg-idle" style="transition: all 0.3s ease; font-size:14px; padding:14px; border-radius:8px; line-height:1.5; border:1px solid;">
+          Ready — select a gate command above.
+        </p>
+
+        <hr>
+
+        <h2>Device Info</h2>
+        <div class="device-info">
+          <div>📶 Wi-Fi Signal: <b id="rssi">-- dBm</b></div>
+          <div>🏷️ Device ID: <b>parking001</b></div>
+          <div>☁️ Broker: <b>Mosquitto :1883</b></div>
+        </div>
+      </aside>
+
+      <article class="card chart-panel">
+        <h2>Occupancy Trend (Last Hour)</h2>
+        <div class="chart-wrap">
+          <canvas id="chart"></canvas>
+          <div id="chartEmpty" class="chart-empty hidden">Gathering historical data...</div>
+        </div>
+      </article>
+
+      <article class="card events-panel">
+        <h2>Recent Activity log</h2>
+        <div class="events-head"><span>Time</span><span>Event</span></div>
+        <div id="events"></div>
+      </article>
+    </section>
+
+    <footer>SmartPark IoT Dashboard &middot; FastAPI + FIWARE Orion + SQLite</footer>
+  </main>
+  <script src="/static/app.js?v=3"></script>
+</body>
+
+</html>

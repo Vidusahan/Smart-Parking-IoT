@@ -1,0 +1,11 @@
+{
+  "services": [
+    {
+      "apikey": "smartpark2026key",
+      "cbroker": "http://orion:1026",
+      "entity_type": "ParkingSite",
+      "resource": "/iot/json",
+      "autoprovision": false
+    }
+  ]
+}

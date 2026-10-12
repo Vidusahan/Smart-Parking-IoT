@@ -1,0 +1,28 @@
+{
+  "devices": [
+    {
+      "device_id": "parking001",
+      "apikey": "smartpark2026key",
+      "entity_name": "urn:ngsi-ld:ParkingSite:001",
+      "entity_type": "ParkingSite",
+      "transport": "MQTT",
+      "attributes": [
+        { "object_id": "s1",   "name": "slot1",          "type": "Text" },
+        { "object_id": "s2",   "name": "slot2",          "type": "Text" },
+        { "object_id": "s3",   "name": "slot3",          "type": "Text" },
+        { "object_id": "s4",   "name": "slot4",          "type": "Text" },
+        { "object_id": "occ",  "name": "occupiedCount",  "type": "Integer" },
+        { "object_id": "free", "name": "availableCount", "type": "Integer" },
+        { "object_id": "rate", "name": "occupancyRate",  "type": "Number" },
+        { "object_id": "gate", "name": "gateStatus",     "type": "Text" },
+        { "object_id": "eg",   "name": "exitGateStatus", "type": "Text" },
+        { "object_id": "ev",   "name": "lastEvent",      "type": "Text" },
+        { "object_id": "rssi", "name": "wifiRssi",       "type": "Integer" }
+      ],
+      "commands": [
+        { "name": "gate",     "type": "command" },
+        { "name": "exitGate", "type": "command" }
+      ]
+    }
+  ]
+}

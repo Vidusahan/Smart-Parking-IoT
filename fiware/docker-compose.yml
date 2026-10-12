@@ -1,0 +1,85 @@
+# SmartPark IoT — FIWARE stack
+# Start:   docker compose up -d
+# Status:  docker compose ps
+# Logs:    docker compose logs -f iot-agent
+# Stop:    docker compose down          (add -v to also erase the data)
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: sp-mosquitto
+    restart: unless-stopped
+    ports: ["1883:1883"]
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  mongo-db:
+    image: mongo:6.0
+    container_name: sp-mongo
+    restart: unless-stopped
+    volumes: [mongo-data:/data/db]
+
+  orion:
+    image: fiware/orion:latest
+    container_name: sp-orion
+    restart: unless-stopped
+    depends_on: [mongo-db]
+    ports: ["1026:1026"]
+    # If the log says "-dbURI" is unknown, replace it with: -dbhost mongo-db
+    command: -dbURI mongodb://mongo-db -logLevel INFO -corsOrigin __ALL
+
+  iot-agent:
+    image: fiware/iotagent-json:latest
+    container_name: sp-iot-agent
+    restart: unless-stopped
+    depends_on: [mongo-db, mosquitto, orion]
+    ports: ["4041:4041"]
+    environment:
+      - IOTA_CB_HOST=orion
+      - IOTA_CB_PORT=1026
+      - IOTA_CB_NGSI_VERSION=v2
+      - IOTA_NORTH_PORT=4041
+      - IOTA_REGISTRY_TYPE=mongodb
+      - IOTA_MONGO_HOST=mongo-db
+      - IOTA_MONGO_PORT=27017
+      - IOTA_MONGO_DB=iotagentjson
+      - IOTA_MONGO_URI=mongodb://mongo-db:27017/iotagentjson
+      - IOTA_PROVIDER_URL=http://iot-agent:4041
+      - IOTA_MQTT_HOST=mosquitto
+      - IOTA_MQTT_PORT=1883
+      - IOTA_DEFAULT_RESOURCE=/iot/json
+      - IOTA_TIMESTAMP=true
+      - IOTA_AUTOCAST=true
+      - IOTA_LOG_LEVEL=DEBUG
+      
+
+  crate-db:
+    image: crate:5.6
+    container_name: sp-crate
+    restart: unless-stopped
+    ports: ["4200:4200", "5432:5432"]
+    command: crate -Cauth.host_based.enabled=false -Cdiscovery.type=single-node -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
+    environment:
+      - CRATE_HEAP_SIZE=1g
+    volumes: [crate-data:/data]
+
+  quantumleap:
+    image: orchestracities/quantumleap:latest
+    container_name: sp-quantumleap
+    restart: unless-stopped
+    depends_on: [crate-db]
+    ports: ["8668:8668"]
+    environment:
+      - CRATE_HOST=crate-db
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sp-grafana
+    restart: unless-stopped
+    depends_on: [crate-db]
+    ports: ["3000:3000"]
+    volumes: [grafana-data:/var/lib/grafana]
+
+volumes:
+  mongo-data:
+  crate-data:
+  grafana-data:

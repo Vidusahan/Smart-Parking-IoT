@@ -1,0 +1,10 @@
+{
+  "description": "SmartPark changes to QuantumLeap",
+  "subject": {
+    "entities": [ { "idPattern": ".*", "type": "ParkingSite" } ]
+  },
+  "notification": {
+    "http": { "url": "http://quantumleap:8668/v2/notify" },
+    "metadata": [ "dateCreated", "dateModified" ]
+  }
+}
